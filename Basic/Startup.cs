@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Basic.AuthReq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -25,7 +28,14 @@ namespace Basic
                                    // if no auth -> redirect to login path
                                    config.LoginPath = "/Home/Auth";
                                });
+            services.AddAuthorization(config =>
+            {
+                config.AddPolicy("Claim.DoB",
+                                 builder => builder.RequireCustomClaim(
+                                     ClaimTypes.DateOfBirth));
+            });
 
+            services.AddScoped<IAuthorizationHandler, CustomRequireClaimHandler>();
             services.AddControllersWithViews();
         }
 

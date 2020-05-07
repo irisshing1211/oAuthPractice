@@ -13,7 +13,8 @@ namespace Basic.Controllers
 
         [Authorize]
         public IActionResult Secret() { return View(); }
-
+        [Authorize(Policy = "Claim.DoB")]
+        public IActionResult SecretPolicy() { return View("Secret"); }
         public IActionResult Auth()
         {
             // once login -> get all the info needed then
@@ -21,6 +22,7 @@ namespace Basic.Controllers
             {
                 new Claim(ClaimTypes.Name, "Bob"),
                 new Claim(ClaimTypes.Email, "bob@mail.com"),
+                new Claim(ClaimTypes.DateOfBirth, "01/01/1991"),
                 new Claim("Welcome", "Hello")
             };
 

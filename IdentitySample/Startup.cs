@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using IdentitySample.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,7 +23,6 @@ namespace IdentitySample
                         config.Password.RequireDigit = false;
                         config.Password.RequireNonAlphanumeric = false;
                         config.Password.RequireUppercase = false;
-                       
                     })
                     .AddEntityFrameworkStores<AppDbContext>()
                     .AddDefaultTokenProviders();
@@ -38,15 +32,7 @@ namespace IdentitySample
                 config.Cookie.Name = "TestCookie";
                 config.LoginPath = "/Home/Login";
             });
-            // services.AddAuthentication("CookieAuth")
-            //         .AddCookie("CookieAuth",
-            //                    config =>
-            //                    {
-            //                        config.Cookie.Name = "MyCookie";
-            //
-            //                        // if no auth -> redirect to login path
-            //                        config.LoginPath = "/Home/Auth";
-            //                    });
+
             services.AddControllersWithViews();
         }
 
