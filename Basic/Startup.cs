@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Basic.AuthReq;
+using Basic.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -41,6 +42,7 @@ namespace Basic
             });
 
             services.AddScoped<IAuthorizationHandler, CustomRequireClaimHandler>();
+            services.AddScoped<IAuthorizationHandler, CookieJarAuthorizationHandler>();
             services.AddControllersWithViews(config =>
             {
                
@@ -51,7 +53,7 @@ namespace Basic
                                     .RequireClaim(ClaimTypes.DateOfBirth)
                                     .Build(); 
                 // set global authorization filter
-                config.Filters.Add(new AuthorizeFilter(defaultPolicy));
+              //  config.Filters.Add(new AuthorizeFilter(defaultPolicy));
             });
         }
 
