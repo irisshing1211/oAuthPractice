@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +14,14 @@ namespace Basic.Controllers
 
         [Authorize]
         public IActionResult Secret() { return View(); }
+
         [Authorize(Policy = "Claim.DoB")]
         public IActionResult SecretPolicy() { return View("Secret"); }
+
         [Authorize(Roles = "Admin")]
         public IActionResult SecretRole() { return View("Secret"); }
+
+        [AllowAnonymous]
         public IActionResult Auth()
         {
             // once login -> get all the info needed then
@@ -38,10 +43,22 @@ namespace Basic.Controllers
             var identity = new ClaimsIdentity(myClaims, "My identity");
             var licenseIdentity = new ClaimsIdentity(licenseClaims, "Gov");
             var userPrincipal = new ClaimsPrincipal(new[] {identity, licenseIdentity});
+
             // 
             HttpContext.SignInAsync(userPrincipal);
 
             return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> DoStuff([FromServices] IAuthorizationService authService)
+        {
+            var builder = new AuthorizationPolicyBuilder("Schema");
+            var customPolicy = builder.RequireClaim("hello").Build();
+            var authResult = await authService.AuthorizeAsync(HttpContext.User, customPolicy);
+
+            if (authResult.Succeeded) { return View("Index"); }
+
+            return View("Index");
         }
     }
 }

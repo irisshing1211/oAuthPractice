@@ -1,1 +1,18 @@
-﻿<h1>home</h1>
+﻿@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+<h1>home</h1>
+@inject IAuthorizationService authService
+
+@* Simple access check*@
+@if (User.Identity.IsAuthenticated)
+{
+    <h1>User is Authenticated</h1>
+}
+else
+{
+    <h1>User is not Authenticated</h1>
+}
+@if ((await authService.AuthorizeAsync(User, "Claim.Dob")).Succeeded)
+{
+    <h1>user auth claim</h1>
+}

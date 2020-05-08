@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -28,15 +29,30 @@ namespace Basic
                                    // if no auth -> redirect to login path
                                    config.LoginPath = "/Home/Auth";
                                });
+
             services.AddAuthorization(config =>
             {
-                config.AddPolicy("Claim.DoB",
-                                 builder => builder.RequireCustomClaim(
-                                     ClaimTypes.DateOfBirth));
+                config.AddPolicy("Admin",
+                                 builder =>
+                                 {
+                                     builder.RequireClaim(ClaimTypes.Role, "Admin");
+                                 });
+                config.AddPolicy("Claim.DoB", builder => builder.RequireCustomClaim(ClaimTypes.DateOfBirth));
             });
 
             services.AddScoped<IAuthorizationHandler, CustomRequireClaimHandler>();
-            services.AddControllersWithViews();
+            services.AddControllersWithViews(config =>
+            {
+               
+                var defaultAuthBuilder=new AuthorizationPolicyBuilder();
+
+                var defaultPolicy = defaultAuthBuilder
+                                    .RequireAuthenticatedUser()
+                                    .RequireClaim(ClaimTypes.DateOfBirth)
+                                    .Build(); 
+                // set global authorization filter
+                config.Filters.Add(new AuthorizeFilter(defaultPolicy));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
