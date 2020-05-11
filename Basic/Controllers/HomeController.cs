@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Basic.Attributes;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,12 @@ namespace Basic.Controllers
 
         [Authorize(Policy = "Claim.DoB")]
         public IActionResult SecretPolicy() { return View("Secret"); }
+
+        [SecurityLevel(5)]
+        public IActionResult SecretLevel() { return View("Secret"); }
+
+        [SecurityLevel(7)]
+        public IActionResult SecretHigherLevel() { return View("Secret"); }
 
         [Authorize(Roles = "Admin")]
         public IActionResult SecretRole() { return View("Secret"); }
