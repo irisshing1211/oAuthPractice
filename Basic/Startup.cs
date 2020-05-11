@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Basic.AuthReq;
 using Basic.Controllers;
+using Basic.CustomAuthorizationPolicy;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,27 +34,26 @@ namespace Basic
 
             services.AddAuthorization(config =>
             {
-                config.AddPolicy("Admin",
-                                 builder =>
-                                 {
-                                     builder.RequireClaim(ClaimTypes.Role, "Admin");
-                                 });
+                config.AddPolicy("Admin", builder => { builder.RequireClaim(ClaimTypes.Role, "Admin"); });
                 config.AddPolicy("Claim.DoB", builder => builder.RequireCustomClaim(ClaimTypes.DateOfBirth));
             });
 
+            services.AddSingleton<IAuthorizationPolicyProvider, CustomAuthorizationPolicyProvider>();
+            services.AddScoped<IAuthorizationHandler, SecurityLevelHandler>();
             services.AddScoped<IAuthorizationHandler, CustomRequireClaimHandler>();
             services.AddScoped<IAuthorizationHandler, CookieJarAuthorizationHandler>();
+
             services.AddControllersWithViews(config =>
             {
-               
-                var defaultAuthBuilder=new AuthorizationPolicyBuilder();
+                var defaultAuthBuilder = new AuthorizationPolicyBuilder();
 
                 var defaultPolicy = defaultAuthBuilder
                                     .RequireAuthenticatedUser()
                                     .RequireClaim(ClaimTypes.DateOfBirth)
-                                    .Build(); 
+                                    .Build();
+
                 // set global authorization filter
-              //  config.Filters.Add(new AuthorizeFilter(defaultPolicy));
+                //  config.Filters.Add(new AuthorizeFilter(defaultPolicy));
             });
         }
 
