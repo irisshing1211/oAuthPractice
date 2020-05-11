@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Basic.Attributes;
+using Basic.CustomAuthorizationPolicy;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -38,6 +39,7 @@ namespace Basic.Controllers
                 new Claim(ClaimTypes.Email, "bob@mail.com"),
                 new Claim(ClaimTypes.DateOfBirth, "01/01/1991"),
                 new Claim(ClaimTypes.Role, "Admin"),
+                new Claim(DynamicPolices.SecurityLevel, "5"),
                 new Claim("Welcome", "Hello")
             };
 
