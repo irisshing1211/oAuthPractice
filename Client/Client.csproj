@@ -13,14 +13,14 @@
         <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       </Content>
-      <Content Update="Views\OAuth\Token.cshtml">
+      <Content Update="Pages\OAuth\Auth.cshtml">
         <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       </Content>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.3" />
+      <_ContentIncludedByDefault Remove="Views\OAuth\Auth.cshtml" />
     </ItemGroup>
 
 </Project>
