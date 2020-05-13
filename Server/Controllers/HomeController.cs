@@ -20,7 +20,6 @@ namespace Server.Controllers
         public IActionResult Auth()
         {
             var claims = new[] {new Claim(JwtRegisteredClaimNames.Sub, "sub_id"), new Claim("custom", "cookie"),};
-           
             var signCred = new SigningCredentials(ConfigConstants.GetKey(), SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(ConfigConstants.Issuer,
@@ -32,11 +31,13 @@ namespace Server.Controllers
 
             var json = new JwtSecurityTokenHandler().WriteToken(token);
 
-            return Ok(new  {token = json});
+            return Ok(new {token = json});
         }
+
         public IActionResult Decode(string part)
         {
             var bytes = Convert.FromBase64String(part);
+
             return Ok(Encoding.UTF8.GetString(bytes));
         }
     }

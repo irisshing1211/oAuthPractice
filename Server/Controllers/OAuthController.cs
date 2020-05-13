@@ -4,6 +4,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -43,7 +44,7 @@ namespace Server.Controllers
             const string code = "some_code";
             var query = new QueryBuilder {{"code", code}, {"state", state}};
 
-// if login success then generate a token from the config.TokenEndpoint then redirect to the uri
+            // if login success then generate a token from the config.TokenEndpoint then redirect to the uri
             return Redirect($"{redirectUri}{query.ToString()}");
         }
 
@@ -81,6 +82,14 @@ namespace Server.Controllers
             #endregion
 
             return Redirect(redirect_uri);
+        }
+
+        [Authorize]
+        public IActionResult Validate()
+        {
+            if (HttpContext.Request.Headers.TryGetValue("Authorization", out var header)) { return Ok(); }
+
+            return BadRequest();
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -50,23 +51,16 @@ namespace Client
                                       OnCreatingTicket = context =>
                                       {
                                           var accessToken = context.AccessToken;
-                                          var base64payload = accessToken.Split('.')[1];
-                                          var bytes = Convert.FromBase64String(base64payload);
-                                          var jsonPayload = Encoding.UTF8.GetString(bytes);
+                                          var token = new JwtSecurityToken(accessToken);
 
-                                          var claims =
-                                              JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonPayload);
-
-                                          foreach (var claim in claims)
-                                          {
-                                              context.Identity.AddClaim(new Claim(claim.Key, claim.Value));
-                                          }
+                                          foreach (var claim in token.Claims) { context.Identity.AddClaim(claim); }
 
                                           return Task.CompletedTask;
                                       }
                                   };
                               });
 
+            services.AddHttpClient(); // add this for using httpcontext in controller
             services.AddControllersWithViews();
         }
 
