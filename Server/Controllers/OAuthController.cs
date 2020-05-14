@@ -56,7 +56,11 @@ namespace Server.Controllers
         /// <param name="redirect_uri"></param>
         /// <param name="client_id"></param>
         /// <returns></returns>
-        public async Task<IActionResult> Token(string grant_type, string code, string redirect_uri, string client_id)
+        public async Task<IActionResult> Token(string grant_type,
+                                               string code,
+                                               string redirect_uri,
+                                               string client_id,
+                                               string refresh_token)
         {
             // validate the code here
             // ...
@@ -67,14 +71,23 @@ namespace Server.Controllers
                                              ConfigConstants.Audiance,
                                              claims,
                                              notBefore: DateTime.Now,
-                                             expires: DateTime.Now.AddDays(1),
+                                             expires: grant_type == "refresh_token"
+                                                 ? DateTime.Now.AddMinutes(5)
+                                                 : DateTime.Now.AddMinutes(1),
                                              signCred);
 
             var access_token = new JwtSecurityTokenHandler().WriteToken(token);
 
             #region write token to response
 
-            var responseObject = new {access_token, token_type = "Bearer", raw_claim = "oauthTutorial"};
+            var responseObject = new
+            {
+                access_token,
+                token_type = "Bearer",
+                raw_claim = "oauthTutorial",
+                refresh_token = "RefreshTokenSampleValueSomething77"
+            };
+
             var responseJson = JsonConvert.SerializeObject(responseObject);
             var responseBytes = Encoding.UTF8.GetBytes(responseJson);
             await Response.Body.WriteAsync(responseBytes, 0, responseBytes.Length);

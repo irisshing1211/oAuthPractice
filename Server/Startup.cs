@@ -27,6 +27,7 @@ namespace Server
                                       // to validate the token
                                       config.TokenValidationParameters = new TokenValidationParameters
                                       {
+                                          ClockSkew = TimeSpan.Zero,
                                           ValidIssuer = ConfigConstants.Issuer,
                                           ValidAudience = ConfigConstants.Audiance,
                                           IssuerSigningKey = ConfigConstants.GetKey()
